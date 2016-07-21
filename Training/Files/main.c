@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#define BUFF_SIZE 420
+
+int main(int argc, char *argv[]){
+	char* filename = argv[1];
+	char a = *argv[2], b = *argv[3], d = *argv[4]; 
+	char buffer[BUFF_SIZE];
+	int i, c = 0;
+	int fd = open(filename, O_RDONLY);
+	int counter = 0;	
+	
+	do {
+		c = read(fd, buffer, BUFF_SIZE);
+			
+		for (i = 0; i < c; i++) {
+			if (buffer[i] == a) {
+				buffer[i] = b;
+			}
+		
+			if (buffer[i] == d) {
+				counter++;
+			}
+		}
+			
+		write(STDOUT_FILENO, buffer, c);	
+	} while(c != 0);
+	
+	printf("The times that symbol is there is/are: %d\n", counter);
+	
+	close(fd);
+	return 0;
+}

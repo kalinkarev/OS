@@ -1,0 +1,53 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#define THREADS_NUM 5
+
+int c = 0;
+
+pthread_mutex_t mutex;
+
+void *increment(void *arg)
+{
+	int i = 0;
+	//size_t thread_num = (size_t) arg;
+	
+	int thread_num = (int) arg;
+	
+	//printf("Hello form %zd thread\n", thread_num);
+
+	pthread_mutex_lock(&mutex, NULL);
+	for (i = 0; i < 1000; i++)
+	{
+		//pthread_mutex_lock(&mutex, NULL);
+		c++;
+		//pthread_mutex_unlock(&mutex, NULL);
+	}
+	pthread_mutex_unlock(&mutex, NULL);
+	
+	printf("%d\n", c);
+}
+
+int main(int argc, char **argv) 
+{
+	int i;
+	pthread_t t[THREADS_NUM];
+	
+	pthread_mutex_init(&mutex, NULL);
+	
+	for (i = 0; i < THREADS_NUM; i++)
+	{
+		pthread_create(&t[i], NULL, increment, (void*)i);
+	}
+
+	for (i = 0; i < THREADS_NUM; i++)
+	{
+		pthread_join(t[i], NULL);
+	}
+
+	printf("Result: %d\n", c);
+
+	pthread_mutex_destroy(&mutex);
+
+	return 0;
+}
